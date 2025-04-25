@@ -19,7 +19,6 @@ def get_all_recipes():
 
                 try:
                     ingredient_matches['quantity'] = float(ingredient_matches['quantity'])
-                    raise
                 except:
                     ingredient_matches['quantity'] = None
 
