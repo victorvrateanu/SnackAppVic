@@ -18,13 +18,13 @@ def get_all_recipes():
                 ingredient_matches = ingredient_regex.match(ingredient)
 
                 try:
-                    ingredient_matches['quantity'] = float(ingredient_matches['quantity'])
-                except TypeError:
-                    print(TypeError)
-                    ingredient_matches['quantity'] = None
+                    quantity = float(ingredient_matches['quantity'])
+                except ValueError as err:
+                    print(err)
+                    quantity = None
 
                 ingredients.append({
-                    'quantity': ingredient_matches['quantity'],
+                    'quantity': quantity,
                     'unit': unit if (unit := ingredient_matches['unit']) else None,
                     'name': ingredient_matches['name'],
                 })
