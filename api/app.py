@@ -129,8 +129,7 @@ def edit_recipe(recipe_id):
         recipe.instructions = data['instructions']
 
     if 'categories' in data:
-        # Ensure all elements in data['categories'] are integers (IDs)
-        category_ids = [c['id'] if isinstance(c, dict) else c for c in data['categories']]
+        category_ids = [c['id'] for c in data['categories']]
         recipe.categories = db.session.query(Category).filter(Category.id.in_(category_ids)).all()
 
     # todo: de adaugat ingrediente
