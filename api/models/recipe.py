@@ -18,9 +18,20 @@ class Recipe(db.Model):
     )
 
     def as_dict(self):
-        #recipe = {}
-        #for col in self.__table__.columns:
-        #    recipe[col.name]=getattr(self, col.name)
-        #
-        #return recipe
-        return {col.name: getattr(self,col.name) for col in self.__table__.columns}
+
+        return {col.name: getattr(self,col.name) for col in self.__table__.columns if col.name != 'pictures'} | {
+            'pictures': self.pictures.split(','),
+            'categories': [
+                {'id': category.id, 'name': category.name, 'color': category.color}
+                for category in self.categories
+            ],
+            'ingredients': [
+                {
+                    'id': ingredient.id,
+                    'name': ingredient.name,
+                    'unit': ingredient.unit,
+                    'quantity': ingredient.quantity
+                }
+                for ingredient in self.ingredients  # deci asta facea backref
+            ]
+        }
