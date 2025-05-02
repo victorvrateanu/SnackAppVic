@@ -128,6 +128,8 @@ def edit_recipe(recipe_id):
     if 'instructions' in data:
         recipe.instructions = data['instructions']
 
+
+    # nu sunt sigur ca merge cum trebuie
     if 'categories' in data:
         category_ids = [c['id'] for c in data['categories']]
         recipe.categories = db.session.query(Category).filter(Category.id.in_(category_ids)).all()
