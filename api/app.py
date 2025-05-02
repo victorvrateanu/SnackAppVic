@@ -133,7 +133,7 @@ def edit_recipe(recipe_id):
         category_ids = [c['id'] if isinstance(c, dict) else c for c in data['categories']]
         recipe.categories = db.session.query(Category).filter(Category.id.in_(category_ids)).all()
 
-
+    # todo: de adaugat ingrediente
     db.session.commit()
 
     return jsonify(recipe.as_dict())
@@ -151,7 +151,7 @@ def get_category():
 @app.route('/api/category', methods=['POST'])
 def create_category():
     data = request.json
-    category = Category.query.filter_by(id=data['name']).first()
+    category = Category.query.filter_by(name=data['name']).first()
     if not category:
         category = Category(
                             name=data['name'],
