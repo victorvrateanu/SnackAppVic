@@ -100,7 +100,7 @@ def create_recipe():
 
 @app.route('/api/recipes/<int:recipe_id>', methods=['DELETE'])
 def delete_recipe(recipe_id):
-    recipe = Recipe.query.get(recipe_id)
+    recipe = db.session.get(Recipe, recipe_id)
     if not recipe:
         return jsonify({'error': 'Recipe not found'}), 404
 
@@ -113,28 +113,44 @@ def delete_recipe(recipe_id):
 
 @app.route('/api/recipes/<int:recipe_id>', methods=['PUT'])
 def edit_recipe(recipe_id):
-    recipe = Recipe.query.get(recipe_id)
+    recipe = db.session.get(Recipe, recipe_id)
     if not recipe:
         return jsonify({'error': 'Recipe not found'}), 404
 
     data = request.json
 
-    if 'name' in data:
+    if data['name']:
         recipe.name = data['name']
-    if 'duration' in data:
+    if data['duration']:
         recipe.duration = data['duration']
-    if 'pictures' in data:
+    if data['pictures']:
         recipe.pictures = ",".join(data['pictures'])
-    if 'instructions' in data:
+    if data['instructions']:
         recipe.instructions = data['instructions']
 
+    if data['categories']:
+        recipe.categories.clear()
 
-    # nu sunt sigur ca merge cum trebuie
-    if 'categories' in data:
-        category_ids = [c['id'] for c in data['categories']]
-        recipe.categories = db.session.query(Category).filter(Category.id.in_(category_ids)).all()
+        for cat_data in data['categories']:
+            category = Category.query.get(cat_data["id"])
+            if category:
+                recipe.categories.append(category)
+            else:
+                category = Category(name=cat_data["name"], color=cat_data.get("color", "#FFFFFF"))
+                db.session.add(category)
+                recipe.categories.append(category)
 
-    # todo: de adaugat ingrediente
+    if data['ingredients']:
+        Ingredient.query.filter_by(recipe_id=recipe.id).delete()
+        for ing in data['ingredients']:
+            new_ing = Ingredient(
+                name=ing["name"],
+                quantity=ing["quantity"],
+                unit=ing.get("unit"),
+                recipe_id=recipe.id
+            )
+            db.session.add(new_ing)
+
     db.session.commit()
 
     return jsonify(recipe.as_dict())
