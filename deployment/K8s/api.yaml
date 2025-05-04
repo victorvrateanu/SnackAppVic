@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flask-api
+  template:
+    metadata:
+      labels:
+        app: flask-api
+    spec:
+      containers:
+        - name: flask-api
+          image: flask-api
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          ports:
+            - containerPort: 5000
+          env:
+            - name: DB_HOST
+              value: mysql 
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: flask-api-service
+spec:
+  selector:
+    app: flask-api
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5000
+      nodePort: 30000
