@@ -18,17 +18,17 @@ db.init_app(app)
 
 @app.route('/')
 def hello_word():
-    return 'Welcome to my snack app!'
+    return 'Welcome to my snack app!', 200
 
 
-@app.route('/api/recipes', methods=['GET'])
+@app.route('/api/recipes/', methods=['GET'])
 def get_recipes():
     recipes = []
 
     for recipe in db.session.query(Recipe).all():
         recipes.append(recipe.as_dict())
 
-    return jsonify(recipes)
+    return jsonify(recipes), 200
 
 
 @app.route('/api/recipes/<int:recipe_id>', methods=['GET'])
@@ -41,7 +41,7 @@ def get_recipe(recipe_id):
     for recipe in db.session.query(Recipe).all():
         recipe = recipe.as_dict()
         if recipe['id'] == recipe_id:
-            return jsonify(recipe)
+            return jsonify(recipe), 200
     return jsonify({'error': "404 Not found"}), 404
 
 
@@ -68,11 +68,11 @@ def create_recipe():
 
     category_obj = []
     for cat in recipe_data['categories']:
-        category = Category.query.filter_by(id=cat['id']).first()
+        category = Category.query.filter_by(id=cat['name']).first()
         if not category:
             category = Category(
-                                name=cat['name'],
-                                color=cat.get('color', '#848482'))
+                name=cat['name'],
+                color=cat.get('color', '#848482'))
             db.session.add(category)
         category_obj.append(category)
 
@@ -108,7 +108,7 @@ def delete_recipe(recipe_id):
 
     db.session.delete(recipe)
     db.session.commit()
-    return jsonify({'message': f'Recipe with ID {recipe_id} deleted successfully'})
+    return jsonify({'message': f'Recipe with ID {recipe_id} deleted successfully'}), 204
 
 
 @app.route('/api/recipes/<int:recipe_id>', methods=['PUT'])
@@ -153,32 +153,34 @@ def edit_recipe(recipe_id):
 
     db.session.commit()
 
-    return jsonify(recipe.as_dict())
+    return jsonify(recipe.as_dict()), 201
 
 
-@app.route('/api/category', methods=['GET'])
+@app.route('/api/categories/', methods=['GET'])
 def get_category():
     categories = []
 
     for category in db.session.query(Category).all():
         categories.append(category.as_dict())
 
-    return jsonify(categories)
+    return jsonify(categories), 200
 
-@app.route('/api/category', methods=['POST'])
+
+@app.route('/api/categories/', methods=['POST'])
 def create_category():
     data = request.json
     category = Category.query.filter_by(name=data['name']).first()
     if not category:
         category = Category(
-                            name=data['name'],
-                            color=data.get('color', '#848482'))
+            name=data['name'],
+            color=data.get('color', '#848482'))
         db.session.add(category)
     else:
         return "Category already exists"
 
     db.session.commit()
-    return jsonify(category.as_dict())
+    return jsonify(category.as_dict()), 201
+
 
 if __name__ == '__main__':
     with app.app_context():

@@ -14,6 +14,7 @@ CATEGORY_COLORS = {
     'No-bake': '#ADD8E6'  # lightblue
 }
 
+
 def get_all_recipes():
     ingredient_regex = re.compile(r'^(?P<quantity>\d+)(?P<unit>[a-zA-Z]*) (?P<name>.+)$')
     all_recipes = []
@@ -54,29 +55,27 @@ def populate_db(recipes):
                     category = Category.query.filter_by(name=cat_name).first()
                     if not category:
                         category = Category(name=cat_name,
-                                            color = CATEGORY_COLORS.get(cat_name, '#848482')
+                                            color=CATEGORY_COLORS.get(cat_name, '#848482')
                                             )
                         db.session.add(category)
                     category_obj.append(category)
 
                 picturesConcat = ','.join(recipe_data['Pictures'])
 
-                recipe = Recipe(name = recipe_data['Recipe name'],
-                                duration = recipe_data['Duration'],
-                                pictures = picturesConcat,
-                                instructions = recipe_data['Instructions'],
-                                categories = category_obj
+                recipe = Recipe(name=recipe_data['Recipe name'],
+                                duration=recipe_data['Duration'],
+                                pictures=picturesConcat,
+                                instructions=recipe_data['Instructions'],
+                                categories=category_obj
                                 )
                 db.session.add(recipe)
-                db.session.flush() # se asigura ca recipe.id e valabil
-
-
+                db.session.flush()  # se asigura ca recipe.id e valabil
 
                 for ingredient_data in recipe_data['Ingredients']:
-                    ingredient = Ingredient(name = ingredient_data['name'],
-                                            unit = ingredient_data['unit'],
-                                            quantity = ingredient_data['quantity'],
-                                            recipe_id = recipe.id,
+                    ingredient = Ingredient(name=ingredient_data['name'],
+                                            unit=ingredient_data['unit'],
+                                            quantity=ingredient_data['quantity'],
+                                            recipe_id=recipe.id,
                                             )
                     db.session.add(ingredient)
                 print(f'Inserted recipe: {recipe.name}')
@@ -87,6 +86,7 @@ def populate_db(recipes):
         except Exception as e:
             db.session.rollback()
             print(f'Erro populating database: {e}')
+
 
 if __name__ == '__main__':
     recipes = get_all_recipes()
