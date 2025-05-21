@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 from dotenv import load_dotenv
-from colors import CATEGORY_COLORS
+
 
 load_dotenv()
 from import_recipes import get_all_recipes, populate_db
