@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from colors import CATEGORY_COLORS
 
 load_dotenv()
-
+from import_recipes import get_all_recipes, populate_db
 from config import Config
 from models import db
 from models.category import Category
@@ -68,12 +68,9 @@ def create_recipe():
 
     category_obj = []
     for cat in recipe_data['categories']:
-        category = Category.query.filter_by(id=cat['name']).first()
+        category = Category.query.filter_by(name=cat['name']).first()
         if not category:
-            category = Category(
-                name=cat['name'],
-                color=cat.get('color', '#848482'))
-            db.session.add(category)
+            return jsonify({'error': f'category {cat["name"]} not found'}), 400
         category_obj.append(category)
 
     pictures_concat = ','.join(recipe_data['pictures'])
@@ -132,13 +129,11 @@ def edit_recipe(recipe_id):
         recipe.categories.clear()
 
         for cat_data in data['categories']:
-            category = Category.query.get(cat_data["id"])
+            category = Category.query.get(cat_data["name"])
             if category:
                 recipe.categories.append(category)
             else:
-                category = Category(name=cat_data["name"], color=cat_data.get("color", "#FFFFFF"))
-                db.session.add(category)
-                recipe.categories.append(category)
+                return jsonify({'error': f'category {cat_data["name"]} not found'}), 400
 
     if data['ingredients']:
         Ingredient.query.filter_by(recipe_id=recipe.id).delete()
@@ -183,7 +178,8 @@ def create_category():
 
 
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
-        # db.drop_all()
-    app.run(debug=True)
+    # with app.app_context():
+    #     db.create_all()
+    #     # db.drop_all()
+    # populate_db(get_all_recipes(), app, db)
+    app.run(host="0.0.0.0")

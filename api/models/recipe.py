@@ -19,22 +19,20 @@ class Recipe(db.Model):
     )
 
     def as_dict(self):
-        return {col.name: getattr(self, col.name) for col in self.__table__.columns if col.name != 'pictures'} | \
-            {
-                'pictures': self.pictures.split(','),
-                'categories': [
-                    category.as_dict(self) for category in self.categories
-                ],
-                'ingredients': [
-                    ingredient.as_dict(self) for ingredient in self.ingredients  # deci asta facea backref
-                ]
-            }
+       return {col.name: getattr(self, col.name) for col in self.__table__.columns if col.name != 'pictures'} | \
+           {
+               'pictures': self.pictures.split(','),
+               'categories': [
+                   category.as_dict() for category in self.categories
+               ],
+               'ingredients': [
+                   ingredient.as_dict() for ingredient in self.ingredients  # deci asta facea backref
+               ]
+           }
 
-        #
-        # Maybe the code below is more readable?
-        #
-        # dictionar = {col.name: getattr(self, col.name) for col in self.__table__.columns}
-        # dictionar['pictures'] =  self.pictures.split(',')
-        # dictionar['categories'] = [category.as_dict(self) for category in self.categories]
-        # dictionar['ingredients'] = [ingredient.as_dict(self) for ingredient in self.ingredients]
-        # return dictionar
+
+    #    dictionar = {col.name: getattr(self, col.name) for col in self.__table__.columns}
+    #    dictionar['pictures'] =  self.pictures.split(',')
+    #    dictionar['categories'] = [category.as_dict() for category in self.categories]
+    #    dictionar['ingredients'] = [ingredient.as_dict() for ingredient in self.ingredients]
+    #    return dictionar

@@ -4,3 +4,4 @@ venv
 __pycache__
 .noai
 old_app.py
+*.pem
