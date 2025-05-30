@@ -1,3 +1,5 @@
+import time
+
 from flask import Flask, jsonify, request
 from dotenv import load_dotenv
 
@@ -28,6 +30,7 @@ def get_recipes():
     for recipe in db.session.query(Recipe).all():
         recipes.append(recipe.as_dict())
 
+    time.sleep(2)
     return jsonify(recipes), 200
 
 
