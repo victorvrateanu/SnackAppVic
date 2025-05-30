@@ -2,14 +2,15 @@ from models import db
 from models.association import recipe_category
 from models.category import Category
 
+
 class Recipe(db.Model):
     __tablename__ = 'recipe'
 
-    id = db.Column(db.Integer, primary_key= True)
-    name = db.Column(db.String(100), nullable = False)
-    duration = db.Column(db.String(50), nullable = False)
-    pictures = db.Column(db.Text, nullable = False)
-    instructions = db.Column(db.Text, nullable = False)
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    duration = db.Column(db.String(50), nullable=False)
+    pictures = db.Column(db.Text, nullable=False)
+    instructions = db.Column(db.Text, nullable=False)
 
     categories = db.relationship(
         'Category',
@@ -18,9 +19,20 @@ class Recipe(db.Model):
     )
 
     def as_dict(self):
-        #recipe = {}
-        #for col in self.__table__.columns:
-        #    recipe[col.name]=getattr(self, col.name)
-        #
-        #return recipe
-        return {col.name: getattr(self,col.name) for col in self.__table__.columns}
+       return {col.name: getattr(self, col.name) for col in self.__table__.columns if col.name != 'pictures'} | \
+           {
+               'pictures': self.pictures.split(','),
+               'categories': [
+                   category.as_dict() for category in self.categories
+               ],
+               'ingredients': [
+                   ingredient.as_dict() for ingredient in self.ingredients  # deci asta facea backref
+               ]
+           }
+
+
+    #    dictionar = {col.name: getattr(self, col.name) for col in self.__table__.columns}
+    #    dictionar['pictures'] =  self.pictures.split(',')
+    #    dictionar['categories'] = [category.as_dict() for category in self.categories]
+    #    dictionar['ingredients'] = [ingredient.as_dict() for ingredient in self.ingredients]
+    #    return dictionar

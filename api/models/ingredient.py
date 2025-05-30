@@ -1,6 +1,7 @@
 from models import db
 from models.recipe import Recipe
 
+
 class Ingredient(db.Model):
     __tablename__ = 'ingredient'
 
@@ -11,3 +12,6 @@ class Ingredient(db.Model):
 
     recipe_id = db.Column(db.Integer, db.ForeignKey('recipe.id'), nullable=False)
     recipe = db.relationship('Recipe', backref=db.backref('ingredients', lazy=True))
+
+    def as_dict(self):
+        return {col.name: getattr(self, col.name) for col in self.__table__.columns}
