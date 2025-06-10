@@ -1,31 +1,42 @@
-import { useState, useEffect } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState } from 'react'
+import { BrowserRouter, Routes, Route } from 'react-router'
 import './App.css'
-import { BrowserRouter, Routes, Route } from 'react-router';
-import { HomePage } from './pages/HomePage';
-import { NavBar } from './components/NavBar.jsx'
-import { AddCategoryModal } from './components/AddCategoryModal.jsx'
+import { Navbar } from "./components/Navbar.jsx"
+import { HomePage } from './pages/HomePage.jsx'
+import { RecipePage } from './pages/RecipePage.jsx'
+import { AddRecipeModal } from './components/AddRecipeForm.jsx'
+import { AddCategoryForm } from './components/AddCategoryForm.jsx'
 
 function App() {
-  const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
 
   return (
-      <>
-        <NavBar handleOpenCategoryModal={() => setShowCategoryModal(true)}/>
-        <BrowserRouter>
-          <Routes>
-            <Route
-              path='/'
-              element={<HomePage />}
-            />
-          </Routes>
-        </BrowserRouter>
+    <>
+      <Navbar
+        onAddRecipe={() => setShowAddModal(true)}
+        onAddCategory={() => setShowAddCategoryModal(true)}
+      />
 
-        <AddCategoryModal
-            show = {showCategoryModal}
-            handleClose={()=> { setShowCategoryModal(false) }}/>
-      </>
+      <BrowserRouter>
+        <Routes>
+          <Route 
+            path='/'
+            element={<HomePage />}
+          />
+          <Route
+            path='/recipes/:recipeId'
+            element={<RecipePage />}
+          />
+        </Routes>
+      </BrowserRouter>
+      
+      <AddRecipeModal showAddModal={showAddModal} setShowAddModal={setShowAddModal} />
+      <AddCategoryForm
+          show={showAddCategoryModal}
+          handleClose={() => setShowAddCategoryModal(false)}
+        />
+    </>
   )
 }
 

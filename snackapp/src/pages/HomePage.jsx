@@ -6,6 +6,7 @@ import hourglass from '../assets/hourglass.svg';
 import {CategoryList} from "../components/CategoryList.jsx";
 import '../components/DurationBadge.css'
 import {DurationBadge} from "../components/DurationBadge.jsx";
+import { Link } from 'react-router-dom';
 
 export function HomePage(){
 
@@ -32,6 +33,7 @@ export function HomePage(){
                 {
                     recipes.map((recipe) =>{
                         return (
+                            <Link to={`/recipes/${recipe.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                             <Card>
                                 <Card.Img src={recipe.pictures[0]} height={300} />
                                 <Card.Body>
@@ -43,6 +45,7 @@ export function HomePage(){
 
                                 </Card.Body>
                             </Card>
+                            </Link>
                         )
                     })
                 }
