@@ -2,7 +2,7 @@ import time
 
 from flask import Flask, jsonify, request
 from dotenv import load_dotenv
-
+from flask_cors import CORS
 
 load_dotenv()
 from import_recipes import get_all_recipes, populate_db
@@ -16,7 +16,7 @@ from models.association import recipe_category
 app = Flask(__name__)
 app.config.from_object(Config)
 db.init_app(app)
-
+CORS(app, origins=[Config.APP_URL or '*'])
 
 @app.route('/')
 def hello_word():
